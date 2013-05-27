@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>PhoneGap File</title>
+</head>
+<body>
+	<label for="data">"Data"</label><br />
+	<input type="text" id="data" /><br />
+	<input type="button" onclick="saveText();" value="Save"/>
+	<input type="button" onclick="loadText();" value="Load"/>
+	<br />
+	<div id="filecontents" >[file contents here when loaded]</div>
+</body>
+<script src="phonegap.js"></script>
+<script type="text/javascript">
+
+	// the name of the file we're going to save
+	var FILENAME = "filename.dat";
+	
+	// is the FileReader and FileWriter available (they might not be as they're asyncronous)
+	var file = {
+			writer: { available: false },
+			reader: { available: false }
+	};
+	
+	// this is in place of jQuery, to easily get a DOM object from an id
+	$ = function (id) {
+		return document.getElementById(id);
+	}
+	
+	// variable to use as the fall-back on error
+	var failCB = function(msg) {
+		return function() {
+			alert("Fail: " + msg);
+		}
+	}
+	
+	// this fires when the device system has loaded
+	document.addEventListener('deviceready', function () {
+		var fail = failCB("requestFileSystem");
+		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
+	})
+	
+	//function called when we have obtained the FileSystem
+	function gotFS(fs) {
+		var fail = failCB("getFile");
+		fs.root.getFile(FILENAME, {create:true, exclusive: false}, gotFileEntry, fail);
+		
+	}
+	
+	// function called when we have got a FileEntry
+	function gotFileEntry(fileEntry){
+		var fail = failCB("getFile");
+		file.entry = fileEntry;
+		
+		fileEntry.createWriter(gotFileWriter, fail);
+		
+		// load the file
+		loadFile();
+	}
+	
+	// when we have a FileWriter object
+	function gotFileWriter(fileWriter) {
+		file.writer.object = fileWriter;
+		file.writer.available = true;
+	}
+	
+	
+	// the first function called, to save the text
+	function saveText()
+	{
+		var data = $('data').value, fail;
+		
+		var datastring = data = $('data').value;
+		
+		if(file.writer.available)
+		{
+			// make the FileWriter unavailable
+			file.writer.available = false;
+			
+			// set it to become available once completed writing
+			file.writer.object.onwriteend = function (evt) {
+				file.writer.available = true;
+				file.writer.object.seek(0);
+			}
+			
+			// write the file
+			file.writer.object.write(datastring);
+		}
+		
+		return false;
+	}
+	
+	function loadText()
+	{
+		// do we have a file entry?
+		if (file.entry) {
+			// get the file
+			file.entry.file(function (dataFile) {
+				// create a reader for the file
+				var reader = new FileReader();
+				// when the reader is loaded
+				reader.onloadend = function (evt) {
+					//display the text
+					$('filecontents').innerHTML = evt.target.result;
+				}
+				reader.readAsText(dataFile);
+			}, failCB("FileReader"));
+		}
+	}
+</script>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.rollerderbytestomatic.lite"
+        versionCode="10" 
+        version   = "1">
+
+    <!-- versionCode is optional and Android only -->
+    
+	<preference name="android-minSdkVersion" value="7" />
+	<preference name="android-targetSdkVersion" value="10" />
+	
+	<preference name="phonegap-version" value="2.7.0" />
+	
+	<preference name="orientation" value="default" />
+	
+	<preference name="show-splash-screen-spinner" value="true" />
+	
+    <name>PhoneGap File</name>
+
+    <description>
+        The most basic App to test File read and write
+    </description>
+
+    <author href="http://jkershaw.com" email="john@jkershaw.com">
+        John Kershaw
+    </author>
+    
+    
+    <preference name="permissions" 
+        	value="none"/>
+    
+    <preference name="android-installLocation" 
+        	value="auto"/>
+
+</widget>

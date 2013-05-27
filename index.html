@@ -11,6 +11,7 @@
 	<input type="button" onclick="loadText();" value="Load"/>
 	<br />
 	<div id="filecontents" >[file contents here when loaded]</div>
+	<div id="debug" >Loaded</div>
 </body>
 <script src="phonegap.js"></script>
 <script type="text/javascript">
@@ -38,12 +39,15 @@
 	
 	// this fires when the device system has loaded
 	document.addEventListener('deviceready', function () {
+		debug("deviceready");
 		var fail = failCB("requestFileSystem");
 		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
 	})
 	
 	//function called when we have obtained the FileSystem
 	function gotFS(fs) {
+
+		debug("gotFS");
 		var fail = failCB("getFile");
 		fs.root.getFile(FILENAME, {create:true, exclusive: false}, gotFileEntry, fail);
 		
@@ -51,6 +55,7 @@
 	
 	// function called when we have got a FileEntry
 	function gotFileEntry(fileEntry){
+		debug("gotFileEntry");
 		var fail = failCB("getFile");
 		file.entry = fileEntry;
 		
@@ -62,14 +67,15 @@
 	
 	// when we have a FileWriter object
 	function gotFileWriter(fileWriter) {
+		debug("gotFileWriter");
 		file.writer.object = fileWriter;
 		file.writer.available = true;
 	}
 	
 	
 	// the first function called, to save the text
-	function saveText()
-	{
+	function saveText() {
+		debug("saveText");
 		var data = $('data').value, fail;
 		
 		var datastring = data = $('data').value;
@@ -78,15 +84,18 @@
 		{
 			// make the FileWriter unavailable
 			file.writer.available = false;
+			debug("writer unavailable");
 			
 			// set it to become available once completed writing
 			file.writer.object.onwriteend = function (evt) {
 				file.writer.available = true;
 				file.writer.object.seek(0);
+				debug("writer available");
 			}
 			
 			// write the file
 			file.writer.object.write(datastring);
+			debug("saved!");
 		}
 		
 		return false;
@@ -94,6 +103,7 @@
 	
 	function loadText()
 	{
+		debug("loadText");
 		// do we have a file entry?
 		if (file.entry) {
 			// get the file
@@ -106,8 +116,14 @@
 					$('filecontents').innerHTML = evt.target.result;
 				}
 				reader.readAsText(dataFile);
+				debug("loaded!");
 			}, failCB("FileReader"));
 		}
+	}
+	
+	function debug(text)
+	{
+		$('debug').innerHTML = text + "<br />" + $('debug').innerHTML;
 	}
 </script>
 </html>

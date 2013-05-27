@@ -33,4 +33,10 @@
     <preference name="android-installLocation" 
         	value="auto"/>
 
+    
+    <plugin name="File" value="org.apache.cordova.FileUtils" />
+	<plugin name="FileTransfer" value="org.apache.cordova.FileTransfer" />
+
+	<plugin name="File" value="CDVFile" />
+	<plugin name="FileTransfer" value="CDVFileTransfer" />
 </widget>

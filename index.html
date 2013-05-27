@@ -82,6 +82,7 @@
 		
 		if(file.writer.available)
 		{
+			debug("writer available");
 			// make the FileWriter unavailable
 			file.writer.available = false;
 			debug("writer unavailable");
@@ -96,6 +97,10 @@
 			// write the file
 			file.writer.object.write(datastring);
 			debug("saved!");
+		}
+		else
+		{
+			debug("writer NOT available");
 		}
 		
 		return false;

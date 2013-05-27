@@ -11,9 +11,9 @@
 	<input type="button" onclick="loadText();" value="Load"/>
 	<br />
 	<div id="filecontents" >[file contents here when loaded]</div>
-	<div id="debug" >Loaded</div>
+	<div id="debug" >...</div>
 </body>
-<script src="phonegap.js"></script>
+
 <script type="text/javascript">
 
 	// the name of the file we're going to save
@@ -33,14 +33,14 @@
 	// variable to use as the fall-back on error
 	var failCB = function(msg) {
 		return function() {
-			alert("Fail: " + msg);
+			alert("Oh bum, the app was unable to save your file. Try again in a bit. The unhelpful error was: " + msg);
 		}
 	}
 	
 	// this fires when the device system has loaded
 	document.addEventListener('deviceready', function () {
 		debug("deviceready");
-		var fail = failCB("requestFileSystem");
+		var fail = failCB("Request to access the File System failed.");
 		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
 	})
 	
@@ -48,7 +48,7 @@
 	function gotFS(fs) {
 
 		debug("gotFS");
-		var fail = failCB("getFile");
+		var fail = failCB("Request to get the File failed.");
 		fs.root.getFile(FILENAME, {create:true, exclusive: false}, gotFileEntry, fail);
 		
 	}
@@ -56,9 +56,10 @@
 	// function called when we have got a FileEntry
 	function gotFileEntry(fileEntry){
 		debug("gotFileEntry");
-		var fail = failCB("getFile");
+		var fail = failCB("Request to get a File Writer failed.");
 		file.entry = fileEntry;
 		
+		// create the File Writer
 		fileEntry.createWriter(gotFileWriter, fail);
 		
 		// load the file
@@ -122,7 +123,7 @@
 				}
 				reader.readAsText(dataFile);
 				debug("loaded!");
-			}, failCB("FileReader"));
+			}, failCB("File Reader failed to load file"));
 		}
 	}
 	
